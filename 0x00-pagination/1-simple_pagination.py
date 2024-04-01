@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
+"""Task 1: Simple pagination.
 """
-Pagination handle class
-"""
-from typing import Tuple
+
 import csv
 import math
-from typing import List
-from os import path, getcwd
+from typing import List, Tuple
+
+
+def index_range(page: int, page_size: int) -> Tuple[int, int]:
+    """Retrieves the index range from a given page and page size."""
+
+    return ((page - 1) * page_size, ((page - 1) * page_size) + page_size)
 
 
 class Server:
@@ -28,61 +32,11 @@ class Server:
         return self.__dataset
 
     def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
-        """
-        Function to retrieve pagination page
-
-        args:
-            page: page number
-            page_size: amount of elements to retrieve
-
-        return: list of list of elements
-        """
-        assert isinstance(page, int) and isinstance(
-            page_size, int
-        ), "page and page_size should be integers"
+        """Retrieves a page of data."""
+        assert type(page) == int and type(page_size) == int
         assert page > 0 and page_size > 0
-
         start, end = index_range(page, page_size)
         data = self.dataset()
         if start > len(data):
             return []
         return data[start:end]
-
-
-def index_range(page: int, page_size: int) -> Tuple[int, int]:
-    """
-    Function to create tuple pagination object
-
-    args:
-        page: page number
-        page_size: size of elements
-
-    return: tuple of page and page size
-    """
-    end_index: int = page * page_size
-    start_index: int = end_index - page_size
-
-    return tuple([start_index, end_index])
-
-
-server = Server()
-
-try:
-    should_err = server.get_page(-10, 2)
-except AssertionError:
-    print("AssertionError raised with negative values")
-
-try:
-    should_err = server.get_page(0, 0)
-except AssertionError:
-    print("AssertionError raised with 0")
-
-try:
-    should_err = server.get_page(2, "Bob")
-except AssertionError:
-    print("AssertionError raised when page and/or page_size are not ints")
-
-
-print(server.get_page(1, 3))
-print(server.get_page(3, 2))
-print(server.get_page(3000, 100))
